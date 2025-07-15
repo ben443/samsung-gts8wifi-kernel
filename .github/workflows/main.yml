@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       BUILD_TARGET:
-        description: 'Build target (e.g., gts8_kor_openx)'
+        description: 'Build target (e.g., gts8wifi_eur_open)'
         required: true
-        default: 'gts8_kor_openx'
+        default: 'gts8wifi_eur_open'
 
 jobs:
   build:
@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Kernel
         run: |
-          sudo bash build_kernel_GKI.sh
+          sudo bash kernel/build_kernel_GKI.sh
           chmod +x ./kernel_platform/build/android/prepare_vendor.sh
           RECOMPILE_KERNEL=1 ./kernel_platform/build/android/prepare_vendor.sh sec gki
 
