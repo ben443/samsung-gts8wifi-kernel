@@ -26,13 +26,13 @@ jobs:
             bc bison flex libssl-dev make \
             gcc build-essential libncurses-dev \
             wget unzip git
-            export PATH=$PATH:$(pwd)/kernel_platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
+            export PATH=kernel/kernel_platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
 
       - name: Build Kernel
         run: |
           sudo bash kernel/build_kernel_GKI.sh
-          chmod +x ./kernel_platform/build/android/prepare_vendor.sh
-          RECOMPILE_KERNEL=1 ./kernel_platform/build/android/prepare_vendor.sh sec gki
+          chmod +x ./kernel/kernel_platform/build/android/prepare_vendor.sh
+          RECOMPILE_KERNEL=1 ./kernel/kernel_platform/build/android/prepare_vendor.sh sec gki
 
       - name: List output files
         run: |
