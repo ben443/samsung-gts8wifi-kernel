@@ -1,0 +1,48 @@
+name: Build Kernel (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      BUILD_TARGET:
+        description: 'Build target (e.g., gts8_kor_openx)'
+        required: true
+        default: 'gts8_kor_openx'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_TARGET: ${{ github.event.inputs.BUILD_TARGET }}
+      TARGET_BUILD_VARIANT: user
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            bc bison flex libssl-dev make \
+            gcc build-essential libncurses-dev \
+            wget unzip git
+            export PATH=$PATH:$(pwd)/kernel_platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
+
+      - name: Build Kernel
+        run: |
+          sudo bash build_kernel_GKI.sh
+          chmod +x ./kernel_platform/build/android/prepare_vendor.sh
+          RECOMPILE_KERNEL=1 ./kernel_platform/build/android/prepare_vendor.sh sec gki
+
+      - name: List output files
+        run: |
+          ls -al arch/*/boot/Image || true
+          find drivers/ -name '*.ko' || true
+
+      - name: Upload Kernel Image
+        uses: actions/upload-artifact@v4
+        with:
+          name: Kernel-Image
+          path: |
+            arch/*/boot/Image
+            drivers/**/*.ko
